@@ -1,0 +1,348 @@
+#!/bin/bash
+
+# Copyright (c) 2013-2014, OblakSoft LLC.  All rights reserved.
+#
+# Usage: install-clouse [--defaults-file=<file.cnf>] [--user=<admin>]
+#
+# Installs and configures ClouSE.
+#
+# The script expects the following:
+#
+#  - mysql must be on the PATH
+#  - the script must be run as root
+#  - the user must know MySQL root password
+#  - the my.cnf file is in /etc/my.cnf (can be overridden w/--defaults-file)
+#
+# Author: Artem Livshits <artem.livshits@gmail.com>
+
+# Parse arguments.
+
+MY_CNF=
+MYSQL_ADMIN=root
+PRINT_HELP=
+
+while [[ $# -ne 0 ]]; do
+    case "$1" in
+        --defaults-file=* )
+            MY_CNF="${1#*=}";;
+
+        --help )
+            PRINT_HELP=yes;;
+
+        --user=* )
+            MYSQL_ADMIN="${1#*=}";;
+
+        * ) echo "ERROR: $1 is not supported, see '$0 --help'" >&2; exit 1;;
+    esac
+    shift
+done
+
+# Help.
+
+if [[ $PRINT_HELP ]]; then
+    echo "Installs ClouSE -- the Cloud Storage Engine for MySQL"
+    echo
+    echo "Usage: $0 [--defaults-file=<file.cnf>] [--help] [--user=<admin>]"
+    echo "  --defaults-file=#   Use this .cnf file instead of /etc/my.cnf."
+    echo "  --help              Display this help and exit."
+    echo "  --user=#            Use this MySQL admin user instead of 'root'."
+    echo
+    echo "This script must be run as root and expects mysql to be on PATH; you must"
+    echo "know MySQL admin password."
+    exit 0
+fi
+
+# Check if this is a good installation.
+
+CLOUSE_ROOT=`dirname $0`
+
+if [[ ! -f "$CLOUSE_ROOT/clouse.so" ]]; then
+    echo "ERROR: $CLOUSE_ROOT/clouse.so is not found" >&2
+    echo "    Please download ClouSE from http://www.oblaksoft.com/downloads/" >&2
+    exit 1
+fi
+
+if [[ ! -f "$CLOUSE_ROOT/wscmd" ]]; then
+    echo "ERROR: $CLOUSE_ROOT/wscmd is not found" >&2
+    echo "    Please download ClouSE from http://www.oblaksoft.com/downloads/" >&2
+    exit 1
+fi
+
+# mysql is required.
+
+PATH=$PATH:/usr/local/mysql/bin
+
+if ! which mysql > /dev/null; then
+    echo "ERROR: mysql is not found, please add it to PATH" >&2
+    exit 1
+fi
+
+# Must run as root.
+
+if [[ $EUID -ne 0 ]]; then
+    echo "ERROR: must be root; use 'sudo $0 $*'" >&2
+    exit 1
+fi
+
+# Figure out my.cnf location.
+
+if [[ -z "$MY_CNF" ]]; then
+    MY_CNF=/etc/my.cnf
+
+    if [[ ! -f "$MY_CNF" ]]; then
+        MY_CNF=/etc/mysql/my.cnf
+    fi
+fi
+
+# my.cnf must exist and contain [mysqld] option group
+
+if [[ ! -f "$MY_CNF" ]]; then
+    echo "ERROR: $MY_CNF is not found, use --defaults-file=<file.cnf> to specify" >&2
+    exit 1
+fi
+
+if ! grep -q "\[mysqld\]" "$MY_CNF"; then
+    echo "ERROR: $MY_CNF doesn't have [mysqld] group -- wrong config file" >&2
+    echo "    use --defaults-file=<file.cnf> to specify a different file" >&2
+    exit 1
+fi
+
+# Collect MySQL information.
+
+set -e
+
+echo "Deploying ClouSE ..."
+echo "... checking MySQL server configuration ..."
+
+MYSQL_INFO_SCRIPT="SELECT '@@@STATUS=', PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME='ClouSE';SELECT '@@@VERSION=', @@VERSION;SELECT '@@@PLUGIN_DIR=', VARIABLE_VALUE FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES WHERE VARIABLE_NAME='plugin_dir';"
+
+echo "... please enter MySQL $MYSQL_ADMIN's password ..."
+MYSQL_INFO=`echo "$MYSQL_INFO_SCRIPT" | mysql -h localhost -u "$MYSQL_ADMIN" --disable-column-names -p "$MYSQL_ROOT_PASSWORD"`
+
+# Parse MySQL information.
+
+CLOUSE_STATUS=`echo "$MYSQL_INFO" | grep ^@@@STATUS= | sed -e 's/^@@@STATUS=\s*//'`
+MYSQL_VERSION=`echo "$MYSQL_INFO" | grep ^@@@VERSION= | sed -e 's/^@@@VERSION=\s*//'`
+MYSQL_PLUGIN_DIR=`echo "$MYSQL_INFO" | grep ^@@@PLUGIN_DIR= | sed -e 's/^@@@PLUGIN_DIR=\s*//'`
+
+if [[ "$CLOUSE_STATUS" == ACTIVE ]]; then
+    echo "ClouSE is already installed and configured, please use update-clouse."
+    exit 0
+fi
+
+echo "... thank you, got it:"
+echo "... MySQL server version: $MYSQL_VERSION"
+echo "... MySQL server plugin dir: $MYSQL_PLUGIN_DIR"
+
+if [[ ! -d "$MYSQL_PLUGIN_DIR" ]]; then
+    echo "ERROR: $MYSQL_PLUGIN_DIR is not found!!!" >&2
+    exit 1
+fi
+
+# Massage MySQL version.  It turns out that MySQL may amend its version
+# based on configuration, so we strip known substrings.
+
+MYSQL_VERSION=${MYSQL_VERSION/-log/}
+MYSQL_VERSION=${MYSQL_VERSION/-cll-lve/-cll}
+
+# Check if we support this MySQL version.
+
+if [[ ! -f "$CLOUSE_ROOT/ha_clouse-$MYSQL_VERSION.so" ]]; then
+    echo "ERROR: $CLOUSE_ROOT/ha_clouse-$MYSQL_VERSION.so is not found" >&2
+    echo "    MySQL server $MYSQL_VERSION is not supported" >&2
+    echo "    Send email to support@oblaksoft.com" >&2
+    exit 1
+fi
+
+# Copy the so's to the plugin dir.
+
+rm -f "$MYSQL_PLUGIN_DIR"/clouse.so
+rm -f "$MYSQL_PLUGIN_DIR"/ha_clouse*.so
+
+cp "$CLOUSE_ROOT/clouse.so" "$MYSQL_PLUGIN_DIR/"
+cp "$CLOUSE_ROOT/ha_clouse-$MYSQL_VERSION.so" "$MYSQL_PLUGIN_DIR/"
+ln -s "$MYSQL_PLUGIN_DIR/ha_clouse-$MYSQL_VERSION.so" "$MYSQL_PLUGIN_DIR/ha_clouse.so"
+
+echo "ClouSE is deployed."
+echo
+
+# Collect the config info.
+
+CLOUD_ACCESS_KEY=AKIAJEB2K24QRM7F3TWA
+CLOUD_SECRET_KEY=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
+CLOUD_DATA_URL=s3://s3.amazonaws.com/rm-wp/rm-media
+
+# echo "Configuring Cloud Storage Connection ..."
+#
+# while true; do
+#     if [[ $CLOUD_ACCESS_KEY ]]; then
+#         echo "... Re-enter Access Key, or hit Enter to keep $CLOUD_ACCESS_KEY"
+#         echo -n "... Access Key: "
+#     else
+#         echo -n "... Enter Access Key: "
+#     fi
+#
+#     read CLOUD_ACCESS_KEY0
+#
+#     if [[ $CLOUD_ACCESS_KEY0 ]]; then
+#         CLOUD_ACCESS_KEY=$CLOUD_ACCESS_KEY0
+#     fi
+#
+#     if [[ $CLOUD_SECRET_KEY ]]; then
+#         echo "... Re-enter Secret Key, or hit Enter to keep $CLOUD_SECRET_KEY"
+#         echo -n "... Secret Key: "
+#     else
+#         echo -n "... Enter Secret Key: "
+#     fi
+#
+#     read CLOUD_SECRET_KEY0
+#
+#     if [[ $CLOUD_SECRET_KEY0 ]]; then
+#         CLOUD_SECRET_KEY=$CLOUD_SECRET_KEY0
+#     fi
+#
+#     if [[ $CLOUD_DATA_URL ]]; then
+#         echo "... Re-enter Bucket URL, or hit Enter to keep $CLOUD_DATA_URL"
+#         echo -n "... Bucket URL: "
+#     else
+#         echo -n "... Enter Bucket URL: "
+#     fi
+#
+#     read CLOUD_DATA_URL0
+#
+#     if [[ $CLOUD_DATA_URL0 ]]; then
+#         CLOUD_DATA_URL=$CLOUD_DATA_URL0
+#     fi
+
+    # Parse and validate URL scheme.
+
+    CLOUD_URL_SCHEME=${CLOUD_DATA_URL%%://*}
+    CLOUD_URL_HPP=${CLOUD_DATA_URL#*://}
+
+    if [[ "$CLOUD_URL_SCHEME" == "$CLOUD_DATA_URL" ]]; then
+        echo "ERROR: Bucket URL must have <scheme>://<host>/<bucket>/<prefix> format" >&2
+        echo "    supported schemes are: s3, gs, walrus" >&2
+        echo "    e.g: s3://s3.amazonaws.com/mybucket/myfolder" >&2
+        continue
+    fi
+
+    case "$CLOUD_URL_SCHEME" in
+        s3 | gs | walrus );;
+
+        * ) echo "ERROR: $CLOUD_URL_SCHEME is not supported, must be one of s3, gs, walrus" >&2; continue;;
+    esac
+
+    # Parse host and port.
+
+    CLOUD_URL_HP=${CLOUD_URL_HPP%%/*}
+    CLOUD_URL_PATH=${CLOUD_URL_HPP#*/}
+
+    CLOUD_URL_HOST=${CLOUD_URL_HP%%:*}
+    CLOUD_URL_PORT=${CLOUD_URL_HP#*:}
+
+    if [[ "$CLOUD_URL_PORT" == "$CLOUD_URL_HP" ]]; then
+        CLOUD_URL_PORT=80
+    fi
+
+    # Parse bucket.
+
+    CLOUD_URL_BUCKET=${CLOUD_URL_PATH%%/*}
+
+    # Validate the arguments.
+
+    if RESULT=`"$CLOUSE_ROOT"/wscmd -i "$CLOUD_ACCESS_KEY" -s "$CLOUD_SECRET_KEY" -U -H "$CLOUD_URL_HOST" -P "$CLOUD_URL_PORT" -n "$CLOUD_URL_BUCKET" -a listAllObjects -x 1 -d /`; then
+        break
+    fi
+
+    echo "ERROR: invalid configuration $RESULT" >&2
+done
+
+CLOUD_AUTH_KEY=$CLOUD_ACCESS_KEY:$CLOUD_SECRET_KEY
+
+# Edit my.cnf file with the entered information.
+
+cp -p "$MY_CNF" "$MY_CNF".bak
+
+CDU_SED=`echo "$CLOUD_DATA_URL" | sed -s 's!\\([/\\\\&]\\)!\\\\\\1!g'`
+CAK_SED=`echo "$CLOUD_AUTH_KEY" | sed -s 's!\\([/\\\\&]\\)!\\\\\\1!g'`
+
+MY_CNF_TMP=`mktemp tmp.my.cnf.XXXXXX`
+trap 'rm "$MY_CNF_TMP"' EXIT
+
+if grep -q "clouse_cloud_auth_key\s*=" "$MY_CNF"; then
+    # my.cnf contains clouse_cloud_auth_key option, substitute it
+    sed -e "s/^.*clouse_cloud_auth_key\s*=.*$/clouse_cloud_auth_key=$CAK_SED/" < "$MY_CNF" > "$MY_CNF_TMP"
+else
+    # my.cnf doesn't contain clouse_cloud_auth_key option, add it
+
+    sed -e "/^\s*\[mysqld\]\s*$/a \
+            clouse_cloud_auth_key=$CAK_SED" < "$MY_CNF" > "$MY_CNF_TMP"
+fi
+
+if grep -q "clouse_cloud_data_url\s*=" "$MY_CNF"; then
+    # my.cnf contains clouse_cloud_data_url option, substitute it
+    sed -e "s/^.*clouse_cloud_data_url\s*=.*$/clouse_cloud_data_url=$CDU_SED/" < "$MY_CNF_TMP" > "$MY_CNF"
+else
+    # my.cnf doesn't contain clouse_cloud_data_url option, add it
+
+    sed -e "/^\s*\[mysqld\]\s*$/a \
+            clouse_cloud_data_url=$CDU_SED" < "$MY_CNF_TMP" > "$MY_CNF"
+fi
+
+rm "$MY_CNF_TMP"
+trap 'cp -p "$MY_CNF".bak "$MY_CNF"' EXIT
+
+echo "Cloud Storage Connection is configured."
+echo
+
+# Install ClouSE into mysql.
+
+echo "Installing ClouSE handlerton ..."
+
+MYSQL_INSTALL_SCRIPT="INSTALL PLUGIN ClouSE SONAME 'ha_clouse.so';INSTALL PLUGIN CLOUSE_TABLES SONAME 'ha_clouse.so';"
+
+set +e
+echo "... please enter MySQL $MYSQL_ADMIN's password ..."
+INSTALL_OUT=`echo "$MYSQL_INSTALL_SCRIPT" | mysql -h localhost -u "$MYSQL_ADMIN" --disable-column-names -p "$MYSQL_ROOT_PASSWORD" 2>&1`
+
+if [[ $? -ne 0 ]]; then
+    # We need to work around the problem when a plugin is installed but
+    # fails to activate, in which case it can be neither installed nor
+    # unistalled.  The INSTALL PLUGIN statement fails with a specific
+    # error, so if we detect the error we assume that ClouSE is installed
+    # and hope for the best.  The most important case is when MySQL got
+    # upgraded to a new version and became incompatible with the installed
+    # ha_clouse-N-N-N.so, so this logic lets the user restore ClouSE
+    # configuration by running install-clouse again.
+    # Here is the error that we're looking for:
+    # ERROR 1062 (23000) at line 1: Duplicate entry 'ClouSE' for key 'PRIMARY'
+    EXIT_CODE=$?
+
+    if ! echo $INSTALL_OUT | grep -qi "Duplicate entry 'ClouSE' for key 'PRIMARY'"; then
+        echo $INSTALL_OUT >&2
+        exit $EXIT_CODE
+    fi
+
+    # The plugin is already installed.  We just need to restart the server to
+    # take effect.
+
+    set -e
+    MYSQL_DAEMON_SCRIPT=
+
+    if [[ -e /etc/init.d/mysql ]]; then
+        MYSQL_DAEMON_SCRIPT=/etc/init.d/mysql
+    elif [[ -e /etc/init.d/mysqld ]]; then
+        MYSQL_DAEMON_SCRIPT=/etc/init.d/mysqld
+    elif [[ -e /etc/init.d/mysql.server ]]; then
+        MYSQL_DAEMON_SCRIPT=/etc/init.d/mysql.server
+    fi
+
+    if [[ $MYSQL_DAEMON_SCRIPT ]]; then
+        $MYSQL_DAEMON_SCRIPT restart
+    else
+        echo "Please restart MySQL server for the changes to take effect."
+    fi
+fi
+
+trap - EXIT
+echo "ClouSE is installed."

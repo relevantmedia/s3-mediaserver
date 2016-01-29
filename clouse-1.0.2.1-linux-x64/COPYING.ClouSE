@@ -1,0 +1,717 @@
+ClouSE 1.0 -- the Cloud Storage Engine
+
+Copyright (c) 2011-2014, Artem Livshits <artem.livshits@gmail.com>.
+All rights reserved.
+
+Copyright (c) 2011-2014, OblakSoft LLC.
+All rights reserved.
+
+
+OBLAKSOFT SOFTWARE LICENSE TERMS
+(End User License Agreement)
+OBLAKSOFT Cloud Storage Engine ClouSE v1.0.
+
+NOTICE TO USER: IMPORTANT - PLEASE READ THIS AGREEMENT CAREFULLY.
+BY DOWNLOADING, INSTALLING, COPYING OR OTHERWISE USING ALL OR ANY PORTION
+OF THE SOFTWARE, YOU AGREE TO BE BOUND BY THE TERMS AND CONDITIONS OF
+THIS EULA. YOU AGREE THAT THIS AGREEMENT IS LIKE ANY WRITTEN NEGOTIATED
+AGREEMENT SIGNED BY YOU. YOU FURTHER AGREE THAT ANY PERSON YOU AUTHORIZE
+TO USE THE SOFTWARE WILL ALSO BE BOUND BY THE TERMS AND CONDITIONS
+OF THIS EULA. IF YOU DO NOT AGREE TO THIS EULA, YOU MAY NOT DOWNLOAD,
+INSTALL, COPY OR USE THE SOFTWARE FOR ANY PURPOSE WHATSOEVER.
+OBLAKSOFT AND ITS ASSOCIATES OWN ALL INTELLECTUAL PROPERTY RIGHTS IN THE
+SOFTWARE. THE SOFTWARE IS LICENSED, NOT SOLD. OBLAKSOFT PERMITS YOU TO
+COPY, DOWNLOAD, INSTALL, USE, OR OTHERWISE BENEFIT FROM THE FUNCTIONALITY
+OR INTELLECTUAL PROPERTY OF THE SOFTWARE ONLY IN ACCORDANCE WITH THE
+TERMS OF THIS AGREEMENT.
+USE OF SOME OBLAKSOFT PRODUCTS, MATERIALS AND SERVICES INCLUDED IN OR
+ACCESSED THROUGH THE SOFTWARE MAY BE SUBJECT TO OTHER TERMS AND CONDITIONS
+TYPICALLY FOUND IN A SEPARATE LICENSE AGREEMENT REFERENCED IN A "README"
+FILE LOCATED WITHIN OR NEAR SUCH MATERIALS AND SERVICES.
+
+1. DEFINITIONS AND INTERPRETATION
+
+
+"EULA" means this end user license agreement (including the preamble),
+and any amendments to it from time to time;
+
+"Computer" means a virtual or physical computer device including a
+server, desktop, notebook, netbook, phone or similar computer that
+accepts information in digital or similar form and manipulates it for
+a specific result based on a sequence of instructions.
+
+"Internal Network" means a private, proprietary network resource
+accessible only by employees and individual contractors (i.e., temporary
+employees) of a specific corporation or similar business entity. Internal
+Network does not include portions of the Internet or any other network
+community open to the public, such as membership or subscription driven
+groups, associations, and similar organizations.
+
+"Licensee", "you", "yourself", "user" or "customer" means the licensee
+of the Software under this EULA.
+
+"Licensor", "OblakSoft", "we", "us" or "our" means OblakSoft LLC,
+a company established under Washington state law having its principal
+place of business at 11870 SE 4th Place Unit 1001 Bellevue WA 98005.
+
+"Software" means (a) all of the information with which this agreement
+is provided, including but not limited to: (i) all software files and
+other computer information; (ii) associated software modules ("Licensed
+Additional Module"), (iii) related media, printed materials, and "online"
+or electronic explanatory written materials and files ("Documentation"),
+(iv) Sample Programs; and (b) any modified versions and copies of, and
+upgrades, updates, additions, enhancement, improvement, and patch to,
+such information, provided to you by Licensor at any time, to the extent
+not provided under separate terms (collectively, "Updates").
+
+"License Model". The Software is licensed based on the number of instances
+of Software that you run.
+
+"Assigning a License" means simply to designate that license to one
+device or user.
+
+"Permitted Number" means one (1) unless otherwise indicated under a
+valid license (e.g., volume license) granted by Licensor.
+
+"Instance" You create an "instance" of Software by executing the
+software's setup or install procedure. You also create an instance of
+software by duplicating an existing instance. References to software in
+this EULA include "instances" of the software.
+
+"Run an Instance" You "run an instance" of software by loading it into
+memory and executing one or more of its instructions. Once running, an
+instance is considered to be running (whether or not its instructions
+continue to execute) until it is removed from memory.
+
+"GPL Software" means GPL software licensed to you under the GNU General
+Public License as published by the Free Software Foundation (GPL). A
+copy of the GPL is included in the files you downloaded or on the media
+on which you received the Software.
+
+"Licensed Additional Module" means additional modules that may be
+provided with and/or used in conjunction with the Software for which
+you have accepted any applicable additional license terms.
+
+"Sample Programs" means sample code, application code, components,
+program or scripts that may be distributed with the Software that are
+identified as Sample Programs in the accompanying Documentation.
+
+"Intellectual Property Rights" means all intellectual property rights
+wherever in the world, whether registered or unregistered, including any
+application or right of application for such rights (and the "intellectual
+property rights" referred to above include copyright and related rights,
+database rights, confidential information, trade secrets, know-how,
+business names, trade names, trademarks, service marks, passing off
+rights, unfair competition rights, patents, petty patents, utility models,
+rights in designs).
+
+2. TRIAL AND PRE-RELEASE SOFTWARE ADDITIONAL TERMS
+
+
+2.1 GENERAL. If available, the Software and each Licensed Additional
+Module ("Trial Product") may be available at no cost until the expiration
+date ("Expiration Date").
+THE PRE-RELEASE SOFTWARE IS TRIAL SOFTWARE THAT IS AVAILABLE AT NO COST
+UNTIL THE NEXT COMMERCIAL RELEASE IS AVAILABLE.
+
+2.2 TRIAL LICENSE. Trial Product may have certain features and functions
+disabled. You may use the Trial Product only until the Expiration
+Date. After the Expiration Date you must either stop using the Software
+or pay for the Software to continue using it. If you fail to pay for it,
+then your license terminates.
+
+2.3 TRIAL PRODUCT WARRANTY DISCLAIMER. THE TRIAL PRODUCT IS LICENSED
+"AS-IS". TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, LICENSOR
+PROVIDES THE SOFTWARE WITHOUT ANY WARRANTIES, GUARANTEES OR CONDITIONS
+OF ANY KIND, EXPRESS, IMPLIED, STATUTORY, OR IN ANY OTHER PROVISION
+OF THIS EULA OR COMMUNICATION WITH YOU, AND LICENSOR SPECIFICALLY
+DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, NON-INFRINGEMENT OF INTELLECTUAL PROPERTY RIGHTS,
+OR ANY WARRANTY OTHERWISE ARISING OUT OF ANY PROPOSAL, SPECIFICATION,
+OR SAMPLE. YOU BEAR THE RISK OF USING IT. YOU ASSUME ALL RESPONSIBILITIES
+FOR CHOOSING, INSTALLING, AND USING THE SOFTWARE. TO THE MAXIMUM EXTENT
+PERMITTED BY APPLICABLE LAW, IN NO EVENT WILL LICENSOR BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS OPPORTUNITIES;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON UNDER ANY THEORY
+OF LIABILITY, WHETHER BASED IN CONTRACT, TORT, NEGLIGENCE, PRODUCT
+LIABILITY, OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE (OR ATTEMPTED
+USE) OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE,
+THROUGH AND AFTER THE EXPIRATION DATE.
+
+2.4 NO SUPPORT. Licensor has no duty to provide support to you during
+your use of the Trial Product.
+
+2.5 PRE-RELEASE SOFTWARE ADDITIONAL TERMS. If the Software is
+pre-commercial release or beta software ("Pre-release Software"),
+then this section applies. The Pre-release Software is a pre-release
+version, does not represent final product from Licensor, may not be fully
+functional, may contain bugs, errors and other problems that could cause
+system or other failures and data loss. Licensor may substantially modify
+in producing any commercial version, and Licensor can provide no assurance
+that it will ever produce or make generally available a commercial version
+of the Pre-release Software. You will destroy all copies of Pre-release
+Software upon request by Licensor or upon Licensor's commercial release
+of such Software. Licensor gives no express warranties, guarantees or
+conditions. YOUR USE OF PRE-RELEASE SOFTWARE IS AT YOUR OWN RISK.
+
+3. LICENSE GRANT AND USE RIGHTS
+
+
+3.1 LICENSE GRANT. The Software is licensed, not sold. This EULA only
+gives you some rights to use the software, where "use" in this EULA means
+storing, loading, installing or executing the Software. Licensor reserves
+all other rights. Subject to the payment by the Licensee of the relevant
+charges and applicable license fees under a Licensor's approved licensing
+model, and the Licensee's compliance with the terms of this EULA, Licensor
+hereby grants you a non-exclusive, non-transferable limited and revocable
+one-year license, without rights to sublicense, to use the object code of
+the Software for the purpose as set forth in the applicable Documentation
+for the Software and to the extent permitted by your Software License.
+
+3.2 GENERAL USE. You may install and use one copy of the Software only
+on the Permitted Number of your compatible Computers. You may use the
+Software only as expressly permitted in this EULA. THE SOFTWARE CONTAINS
+A LOCKING CODE WHICH MAY AUTOMATICALLY LOCK AT THE END OF THE LICENCE
+TERM AND THAT MAY LIMIT CERTAIN FEATURES AND FUNCTIONS UNTIL THE LICENSE
+IS RENEWED.
+
+3.3 ASSIGNING THE LICENSE TO THE COMPUTER. Before you run any instance
+of the software under a software license, you must assign that license
+to one of your computers. That computer is the licensed computer for
+that particular license. You may assign other software licenses to the
+same Computer, but you may not assign the same license to more than
+one Computer.
+
+3.4 TRANSFER TO ANOTHER COMPUTER. You may uninstall the software and
+install it on another computer for your use. You may not share this
+license between devices. If you reassign a license, the computer to
+which you reassign the license becomes the new licensed computer for
+that license.
+
+3.5 BACKUP COPY. You may not copy the Software except for a reasonable
+number of machine-readable copies of the Software for backup or archival
+purposes and except as expressly permitted in this EULA. You may use it
+only to install the Software.
+
+3.6 RENEWALS. You are responsible renewing your license before its end
+of term. You agree that you have thirty (30) calendar days from the
+date that your license was renewed to elect to discontinue your use of
+the Software. If you elect to discontinue your use of Software within
+this period, you will be issued a full refund for the amount of your
+license renewal.
+
+3.7 REFUNDS. By purchasing a license, you have thirty (30) days from
+its activation to cancel your license. You will receive a full refund
+of the purchase price.
+
+3.8 EFFECT OF END OF LICENSE. You agree that if you cancel your license
+or fail to renew an expired or license is terminated for any reason,
+the feature set of the Software may become limited. You are solely
+responsible for the accessibility and availability of your data managed
+with the help of the Software after the end of the license term.
+
+3.9 CHANGES TO LICENSE. From time to time, Licensor may change the terms
+and conditions of this EULA, without prior notice to you. Such changes
+will be effective immediately and will be made available on Licensor's
+website. Licensor will notify you of such change using the information
+you provided to the Licensor in the form of your registration data. Your
+continued use of the Software will indicate your agreement to the
+change. If you disagree with the change and wish to cancel your license
+after the change in the terms and conditions of this EULA, you must do so
+by sending the email to support@oblaksoft.com within thirty (30) calendar
+days after the change to the EULA with an explicit indication of the
+reason for the license cancelation including the version of the license
+you don't agree with. In this case you will receive a pro-rata refund for
+the unused portion of your license as of the date of the license change.
+
+4. RESTRICTIONS AND REQUIREMENTS
+
+
+4.1 NOTICES. Any permitted copy of the Software that you make must
+contain the same copyright and other proprietary notices that appear on
+or in the Software.
+
+4.2 USE OBLIGATIONS. You agree that you will not use the Software other
+than as permitted by this EULA and that you will not use the Software
+in a manner inconsistent with its design or Documentation.
+
+4.3 NO MODIFICATIONS. Except as expressly permitted in this EULA, you
+may not modify, port, adapt or translate the Software in whole or in part.
+
+4.4 NO REVERSE ENGINEERING. Except to the extent expressly permitted
+by applicable law, and to the extent that Licensor is not permitted by
+that applicable law to exclude or limit the following rights, you may
+not decompile, disassemble, reverse engineer, or otherwise attempt to
+derive or discover the source code from the Software, in whole or in part.
+
+4.5 NO UNBUNDLING. The Software may include various applications,
+utilities, and components, may support multiple platforms and
+languages, and may be provided to you on multiple media or in multiple
+copies. Nonetheless, the Software is designed and provided to you as a
+single product to be used as a single product on Computers as permitted
+by this EULA. You are not required to install all component parts of the
+Software, but you may not unbundle the component parts of the Software
+for use on different Computers. You may not unbundle or repackage the
+Software for distribution, transfer or resale.
+
+4.6 NO TRANSFER. You may not (i) sell, lease, license, sublicense,
+distribute, lend, assign or otherwise transfer in whole or in part the
+Software or your rights in the Software to another party; (ii) provide,
+publish, disclose, divulge or make available to, or permit use of the
+Software in whole or in part by, any third party without Licensor's prior
+written consent; or (iii) modify or create derivative works based upon
+the Software.
+
+4.7 UNAUTHORIZED USE. THE SOFTWARE ARE NOT DESIGNED, INTENDED, OR
+AUTHORIZED FOR USE IN ANY TYPE OF SYSTEM OR APPLICATION IN WHICH THE
+FAILURE OF THE MATERIALS COULD CREATE A SITUATION WHERE PERSONAL INJURY
+OR DEATH MAY OCCUR (E.G. MEDICAL SYSTEMS, LIFE SUSTAINING OR LIFE SAVING
+SYSTEMS). Should the Licensee purchase or use the Software for any such
+unintended or unauthorized use, the Licensee shall indemnify and hold
+Licensor and its officers, subsidiaries and affiliates harmless against
+all claims, costs, damages, and expenses, and reasonable attorney fees
+arising out of, directly or indirectly, any claim of product liability,
+personal injury or death associated with such unintended or unauthorized
+use, even if such claim alleges that Licensee was negligent.
+
+5. ADDITIONAL LICENSING REQUIREMENTS AND/OR USE RIGHTS
+
+
+5.1 ADDITIONAL FUNCTIONALITY. Licensor may provide additional
+functionality for the Software. Other license terms and fees may apply.
+
+5.2 GPL SOFTWARE. You can redistribute and/or modify the GPL Software
+under the terms of the GPL. You may obtain a copy of the source code
+corresponding to the binaries for the GPL Software (the "GPL Source
+Files") by sending a request, with your name and address, to Licensor
+at the address specified under the heading "Contact Information" below,
+in which case Licensor will give you access to a copy of the GPL Source
+Files. This offer to obtain a copy of the GPL Source Files is valid for
+three years from the date you acquired this Software product.
+
+5.3 SAMPLE PROGRAMS. The Software may include Sample Programs. You may use
+and distribute Sample Programs under the terms set forth in the applicable
+Sample Programs files. Licensor does not provide support services for
+Sample Programs. You may modify the source code form of those portions
+of the Sample Programs; provided, however, you are permitted to copy and
+distribute the Sample Programs (modified or unmodified) only if all of
+the following conditions are met: (a) you do not use the Licensor's name,
+logos or other trademarks to market your application. (b) you agree to
+indemnify, hold harmless and defend Licensor from and against any loss,
+damage, claims or lawsuits, including attorney's fees, that arise or
+result from the use or distribution of your application.
+
+5.4 DOCUMENTATION. Unless stated otherwise in the "README" files or
+other license(s) associated with the Software or related Documentation,
+which may include specific rights and restrictions with respect to such
+materials, any person that has valid access to your computer or internal
+network may copy and use the Documentation for your internal, reference
+purposes. You may make copies of the Documentation for your own internal
+use in connection with use of the Software in accordance with this EULA
+but no more than the amount reasonably necessary. Any permitted copy
+of the Documentation that you make must contain the same copyright
+and other proprietary notices applicable to the Documentation. You
+may not distribute the Content Files on a stand-alone basis (i.e., in
+circumstances in which the Content Files constitute the primary value
+of the product being distributed), and you may not claim any copyright
+and trademark rights in the Content Files or derivative works thereof.
+
+6. TITLE
+
+
+Licensor and its associates retains all right, title, and interest
+in and to the Software and in all related copyrights, trade secrets,
+patents, trademarks, and any other intellectual and industrial property
+and proprietary rights, including registrations, applications, renewals,
+and extensions of such rights. Licensor retains all rights not expressly
+granted to you. You may not remove any titles, trademarks or trade
+names, copyright notices, legends, or other proprietary markings on the
+Software. You are not granted any rights to any trademarks or service
+marks of Licensor.
+
+7. SUPPORT AND USER DATA
+
+
+7.1 SUPPORT AND SUBSCRIPTION SERVICES NOT INCLUDED. Licensor will not
+provide any support services under this EULA. This EULA does not give
+you any rights to any updates or upgrades to the Software or to any
+extensions or enhancements to the Software developed by Licensor at any
+time in the future. Licensor may offer support and subscription services
+related to the Software ("Support Services") separately. Any supplemental
+software code or related materials that Licensor provides to you as part
+of any support and subscription services are to be considered part of
+the Software and are subject to the terms and conditions of this EULA.
+
+7.2. USER SUBMISSIONS. You agree that any material, information or
+other communication you transmit or post to the Licensor website or
+provide to Licensor under this EULA related to the features, functions,
+performance or use of the Software will be considered non-confidential and
+non-proprietary ("Communications"). Licensor will have no obligations
+with respect to the Communications. You hereby grant to Licensor a
+non-exclusive, perpetual, irrevocable, royalty-free, copyright license
+to copy, modify, create derivative works, publicly display, disclose,
+distribute, license and sublicense through multiple tiers of distribution
+and licensees, incorporate and otherwise use the Communications and all
+data, images, sounds, text, and other things embodied therein, including
+derivative works thereto, for any and all commercial or non-commercial
+purposes. You are prohibited from posting or transmitting to or from
+the Licensor website or provide to Licensor any unlawful, threatening,
+libelous, defamatory, obscene, pornographic, or other material that
+would violate any law. If you wish to provide Licensor with your
+confidential information, Licensor requires a non-disclosure EULA ("NDA")
+to receive such confidential information, so please contact your Licensor
+representative to ensure the proper NDA is in place.
+
+7.3. CONSENT. You agree that Licensor may use any technical and related
+information you provide to Licensor, including but not limited to
+technical information about your computer, system and application software
+for any Licensor business purposes without restriction, including for
+product support, provision of software updates,  development, and to
+verify compliance with the terms of this EULA. Licensor will not use
+information in a form that personally identifies you. You agree that
+the Licensor may retain (but shall have no obligation to retain) your
+registration data that you provided to the Licensor for a period after
+your trial or license has been terminated, expired, or otherwise lapsed,
+as part of Licensor's marketing to you the opportunity to purchase,
+renew, or extend a license. You will have an opportunity to explicitly
+request discontinuing direct marketing communication to you or you can
+delete your registration altogether.
+
+8. DISCLAIMER OF WARRANTY AND LIABILITY
+
+
+8.1 DISCLAIMER OF WARRANTY. Licensor does not warrant that the functions
+contained in the Software will meet your requirements, that the operation
+of the Software will be uninterrupted or error-free, or that defects in
+the Software will be corrected. The issuance of any corrections, patches,
+bug fixes, workarounds, upgrades, enhancements, or updates by Licensor to
+you, shall not be deemed to begin a new, extended, or additional license,
+license period, or warranty period.
+THE SOFTWARE IS LICENSED "AS-IS". TO THE MAXIMUM EXTENT PERMITTED BY
+APPLICABLE LAW, LICENSOR PROVIDES THE SOFTWARE WITHOUT ANY WARRANTIES,
+GUARANTEES OR CONDITIONS OF ANY KIND, EXPRESS, IMPLIED, STATUTORY, OR IN
+ANY OTHER PROVISION OF THIS EULA OR COMMUNICATION WITH YOU, AND LICENSOR
+SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT OF INTELLECTUAL
+PROPERTY RIGHTS, OR ANY WARRANTY OTHERWISE ARISING OUT OF ANY PROPOSAL,
+SPECIFICATION, OR SAMPLE. YOU BEAR THE RISK OF USING IT. YOU ASSUME ALL
+RESPONSIBILITIES FOR CHOOSING, INSTALLING, AND USING THE SOFTWARE.
+
+8.2 NO LIABILITY FOR DAMAGES. TO THE MAXIMUM EXTENT PERMITTED BY
+APPLICABLE LAW, IN NO EVENT WILL LICENSOR BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS OPPORTUNITIES;
+OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON UNDER ANY THEORY OF
+LIABILITY, WHETHER BASED IN CONTRACT, TORT, NEGLIGENCE, PRODUCT LIABILITY,
+OR OTHERWISE ARISING IN ANY WAY OUT OF THE USE (OR ATTEMPTED USE) OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+BECAUSE SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OR LIMITATION
+OF LIABILITY FOR CONSEQUENTIAL OR INCIDENTAL DAMAGES, THE PRECEDING
+LIMITATION MAY NOT APPLY TO YOU. LICENSOR'S LIABILITY UNDER THIS EULA
+WILL NOT, IN ANY EVENT, EXCEED U.S. $1.00, FOR THE SOFTWARE PURCHASED BY
+YOU AND LICENSED TO YOU UNDER THIS EULA. THE FOREGOING LIMITATIONS SHALL
+APPLY TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, REGARDLESS
+OF WHETHER LICENSOR HAS BEEN ADVISED OR SHOULD HAVE KNOWN OF THE
+POSSIBILITY OF SUCH DAMAGES AND REGARDLESS OF WHETHER ANY REMEDY FAILS
+OF ITS ESSENTIAL PURPOSE.
+
+8.3 CUSTOMER REMEDIES. YOUR EXCLUSIVE REMEDY SHALL BE, AT LICENSOR OPTION,
+REPAIR OR REPLACEMENT OF THE SOFTWARE.
+
+9. TERMINATION
+
+
+9.1 TERMINATION. This EULA becomes effective on the date you accept this
+agreement and will continue until terminated as provided for in this
+agreement. Without prejudice to any other rights, Licensor may terminate
+this EULA immediately and without notice if you fail to comply with any
+term or condition of this EULA.
+
+9.2 EFFECT OF TERMINATION. In the event of termination, you must destroy
+all copies of the Software. In addition you must remove all copies of
+the Software, including all backup copies, from all computers on which
+it is installed.
+
+10. GENERAL
+
+
+10.1 ENTIRE AGREEMENT. This Agreement sets forth Licensor's entire
+liability and your exclusive remedy with respect to the Software and
+supersedes the terms of any purchase orders and any other communications
+or advertising with respect to the Software. You acknowledge that this
+EULA is a complete statement of the agreement between you and Licensor
+with respect to the Software, and that and it supersedes any prior or
+contemporaneous understandings, promises, representations, discussions,
+undertakings, communications, descriptions or advertising relating to the
+Software. Licensor is not responsible for misprints, errors or omissions
+in its documentation, advertising and promotional materials.
+
+10.2 BILLING DISCREPANCIES. You must notify Licensor about any
+billing problems or discrepancies within sixty (60) days after they
+first appear on the statement you receive from your bank, credit card
+company or other billing company. Send such notification to Licensor at
+support@oblaksoft.com. If you do not bring such problems or discrepancies
+to Licensor attention within that sixty (60) day period, you agree that
+you waive the right to dispute such problems or discrepancies.
+
+10.3 WAIVER AND MODIFICATION. No failure of either party to exercise or
+enforce any of its rights under this EULA will act as a waiver of those
+rights. This EULA may only be modified, or any rights under it waived,
+by a written document executed by the party against which it is asserted.
+
+10.4 SEVERABILITY. If any provision of this EULA is found illegal or
+unenforceable, it will be enforced to the maximum extent permissible,
+and the legality and enforceability of the other provisions of this EULA
+will not be affected.
+
+10.5 GOVERNING LAW. This EULA will be governed by Washington state law
+and the United States of America, without regard to its choice of law
+principles. The United Nations Convention for the International Sale of
+Goods shall not apply.
+
+10.6 EXPORT RESTRICTIONS. The Software is subject to United States export
+laws and regulations. You must comply with all domestic and international
+export laws and regulations that apply to the software. These laws
+include restrictions on destinations, end users and end use.
+
+10.7 U.S. GOVERNMENT RESTRICTED RIGHTS. The Software, technical data and
+accompanying documentation are deemed to be "commercial computer software"
+and "commercial computer software documentation" respectively, pursuant
+to DFAR Section 227.7202 and FAR Section 12.212(b), as applicable. Any
+use, modification, reproduction, release, performing, displaying, or
+disclosing of the Software by the U.S. Government shall be governed
+solely by the terms of this EULA.
+
+10.8 THIRD PARTY PROGRAMS. The Software may include third party programs
+or materials. The license terms with those programs or materials apply
+to your use of them, and Licensor is not liable for them.
+
+10.9 CONTACT INFORMATION. If you have any questions about this
+EULA, or if you want to contact Licensor for any reason, please email
+support@oblaksoft.com or use the address and contact information included
+with this Software to contact the Licensor office. Licensor's website
+is www.oblaksoft.com.
+
+10.10 TRADEMARKS. ClouSE(r) is a registered trademark of Artem Livshits.
+OblakSoft(tm) and Yapixx(tm) are trademarks of OblakSoft LLC. Other names
+may be trademarks of their respective owners.
+
+September 2012,v2
+
+****************************************************************
+
+
+The following software may be included in clouse.so:
+
+* cURL
+
+ Copyright (c) 1996 - 2011, Daniel Stenberg, <daniel@haxx.se>.
+
+  All rights reserved.
+
+  Permission to use, copy, modify, and distribute this software for any purpose
+  with or without fee is hereby granted, provided that the above copyright
+  notice and this permission notice appear in all copies.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RIGHTS. IN
+  NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+  DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+  OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+  OR OTHER DEALINGS IN THE SOFTWARE.
+
+  Except as contained in this notice, the name of a copyright holder shall not
+  be used in advertising or otherwise to promote the sale, use or other dealings
+  in this Software without prior written authorization of the copyright holder.
+
+
+The following software may be included in clouse.so:
+
+* libAWS
+
+ Copyright 2008 28msec, Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+
+The following software may be included in clouse.so:
+
+* libxml2
+
+ Copyright (C) 1998-2003 Daniel Veillard.  All Rights Reserved.
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is fur-
+  nished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FIT-
+  NESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+  DANIEL VEILLARD BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+  IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CON-
+  NECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+  Except as contained in this notice, the name of Daniel Veillard shall not
+  be used in advertising or otherwise to promote the sale, use or other deal-
+  ings in this Software without prior written authorization from him.
+
+
+The following software may be included in clouse.so:
+
+* openSSL
+
+ Copyright (c) 1998-2011 The OpenSSL Project.  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer. 
+
+  2. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in
+     the documentation and/or other materials provided with the
+     distribution.
+
+  3. All advertising materials mentioning features or use of this
+     software must display the following acknowledgment:
+     "This product includes software developed by the OpenSSL Project
+     for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
+
+  4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
+     endorse or promote products derived from this software without
+     prior written permission. For written permission, please contact
+     openssl-core@openssl.org.
+
+  5. Products derived from this software may not be called "OpenSSL"
+     nor may "OpenSSL" appear in their names without prior written
+     permission of the OpenSSL Project.
+
+  6. Redistributions of any form whatsoever must retain the following
+     acknowledgment:
+     "This product includes software developed by the OpenSSL Project
+     for use in the OpenSSL Toolkit (http://www.openssl.org/)"
+
+  THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
+  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+  PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
+  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+  OF THE POSSIBILITY OF SUCH DAMAGE.
+  ====================================================================
+
+  This product includes cryptographic software written by Eric Young
+  (eay@cryptsoft.com).  This product includes software written by Tim
+  Hudson (tjh@cryptsoft.com).
+
+ Original SSLeay License
+ -----------------------
+
+ Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
+ All rights reserved.
+
+  This package is an SSL implementation written
+  by Eric Young (eay@cryptsoft.com).
+  The implementation was written so as to conform with Netscapes SSL.
+  
+  This library is free for commercial and non-commercial use as long as
+  the following conditions are aheared to.  The following conditions
+  apply to all code found in this distribution, be it the RC4, RSA,
+  lhash, DES, etc., code; not just the SSL code.  The SSL documentation
+  included with this distribution is covered by the same copyright terms
+  except that the holder is Tim Hudson (tjh@cryptsoft.com).
+  
+  Copyright remains Eric Young's, and as such any Copyright notices in
+  the code are not to be removed.
+  If this package is used in a product, Eric Young should be given attribution
+  as the author of the parts of the library used.
+  This can be in the form of a textual message at program startup or
+  in documentation (online or textual) provided with the package.
+  
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+  1. Redistributions of source code must retain the copyright
+     notice, this list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in the
+     documentation and/or other materials provided with the distribution.
+  3. All advertising materials mentioning features or use of this software
+     must display the following acknowledgement:
+     "This product includes cryptographic software written by
+      Eric Young (eay@cryptsoft.com)"
+     The word 'cryptographic' can be left out if the rouines from the library
+     being used are not cryptographic related :-).
+  4. If you include any Windows specific code (or a derivative thereof) from 
+     the apps directory (application code) you must include an acknowledgement:
+     "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
+  
+  THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+  SUCH DAMAGE.
+  
+  The licence and distribution terms for any publically available version or
+  derivative of this code cannot be changed.  i.e. this code cannot simply be
+  copied and put under another distribution licence
+  [including the GNU Public Licence.]
+
+
+The following software may be included in clouse.so:
+
+* zlib
+
+ Copyright (C) 1995-2010 Jean-loup Gailly and Mark Adler
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+  Jean-loup Gailly        Mark Adler
+  jloup@gzip.org          madler@alumni.caltech.edu

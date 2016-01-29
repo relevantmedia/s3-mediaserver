@@ -1,0 +1,106 @@
+#*********************************************
+#*** ClouSE Specific configuration options ***
+
+# These options must be specified in the [mysqld] section.
+[mysqld]
+
+# NOTE: MySQL would refuse to start if it finds unrecognized
+# options in the [mysqld] section of the my.cnf file.  So
+# the ClouSE plugin installation should happen in the following
+# order:
+#
+#  1. Start MySQL server
+#  2. Add the ClouSE configuration options to the my.cnf file
+#  3. Execute the INSTALL PLUGIN statement
+
+
+# clouse_cloud_data_url can be used to specify the cloud data
+# storage location root; this option must be specified in order
+# for ClouSE plugin to initialize.
+#
+# The Amazon S3 format is the following:
+#
+#    s3://<AmazonS3RegionEndpoint>/<bucketName>
+# or
+#    s3://<AmazonS3RegionEndpoint>/<bucketName>/<prefix>
+#
+# where <AmazonS3RegionEndpoint> is a region-specific REST API
+# endpoint, for example s3.amazonaws.com or s3-eu-west-1.amazonaws.com.
+# For a list of the REST API endpoints and their corresponding regions
+# please refer to
+# http://docs.amazonwebservices.com/general/latest/gr/rande.html#s3_region
+#
+# The <bucketName> is the name of the bucket that is going to contain
+# the ClouSE data; and an optional arbitrary <prefix> can be used if
+# it's desired to use only part of the bucket namespace for ClouSE.
+#
+# To get started with Amazon S3 please refer to
+# http://docs.amazonwebservices.com/AmazonS3/latest/gsg/
+#
+#
+# The Google Cloud Storage format is the following:
+#
+#    gs://commondatastorage.googleapis.com/<bucketName>
+# or
+#    gs://commondatastorage.googleapis.com/<bucketName>/<prefix>
+#
+# To get started with Google Cloud Storage please refer to
+# https://developers.google.com/storage/docs/getting-started
+#
+#
+# The Eucalyptus Walrus format is the following:
+#
+#    walrus://<hostname>:8773/<bucketName>
+# or
+#    walrus://<hostname>:8773/<bucketName>/<prefix>
+#
+# where <hostname> is the host name of the machine that runs the Walrus
+# services.  For more information about Walrus please refer to
+# http://www.eucalyptus.com
+
+#clouse_cloud_data_url=s3://s3.amazonaws.com/mybucket/shard0
+
+
+# clouse_cloud_auth_key should specify the corresponding authentication
+# key in the form of <AccessKeyId>:<SecretAccessKey>.
+# The authentication key must allow read / write access to the cloud
+# storage location.
+
+#clouse_cloud_auth_key=MYACCESSKEYID:MySeCRetKeY
+
+
+# clouse_cloud_data_encrypt_key can be used to specify the
+# encryption key.  The encryption key format is aes256:<passphrase>
+# where <passphrase> can be any phrase, case-sensitive, leading and
+# trailing whitespace is trimmed, but spaces between the words are
+# significant.  The actual encryption key used in the encryption
+# algorithm is deterministically generated from the passphrase, so
+# the passphrase doesn't need to be random, but it should be long
+# enough to generate a good encryption key.
+#
+# If clouse_cloud_data_encrypt_key is not set, data is not encrypted.
+#
+# CAUTION: once the encryption key is set it cannot be changed as
+# the data that has been encrypted with the key cannot be read with
+# a different key.  It is recommended to set the encryption key at
+# the very beginning (unless the data is supposed to stay unencrypted).
+
+#clouse_cloud_data_encrypt_key=aes256:suPer-SecreT phrase!
+
+# clouse_cloud_proxy option can be used to specify a web proxy for
+# accessing the Internet.  The format is <proxyHost>:<proxyPort>.
+
+#clouse_cloud_proxy=myproxy:8080
+
+
+# clouse_local_log_path can be used to specify the location of the
+# local copy of the transaction log.  If clouse_local_log_path is
+# not specified, the local copy of the transaction log is stored in
+# the MySQL data directory in clse_log* files.
+
+#clouse_local_log_path=/data/clouse/mylog
+
+
+# Make ClouSE to be the default storage engine.
+default-storage-engine=ClouSE
+

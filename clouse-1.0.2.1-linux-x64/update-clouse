@@ -1,0 +1,355 @@
+#!/bin/bash
+
+# Copyright (c) 2013-2014, OblakSoft LLC.  All rights reserved.
+#
+# Usage: update-clouse [--defaults-file=<file.cnf>] [--user=<admin>]
+#
+# Updates ClouSE to a different version.
+#
+# The script expects the following:
+#
+#  - mysql must be on the PATH
+#  - the script must be run as root
+#  - the user must know MySQL root password
+#  - the my.cnf file is in /etc/my.cnf (can be overridden w/--defaults-file)
+#
+# Author: Artem Livshits <artem.livshits@gmail.com>
+
+# Parse arguments.
+
+MY_CNF=
+MYSQL_ADMIN=root
+PROMPT_PASSWORD=
+PRINT_HELP=
+
+while [[ $# -ne 0 ]]; do
+    case "$1" in
+        --defaults-file=* )
+            MY_CNF="${1#*=}";;
+
+        --help )
+            PRINT_HELP=yes;;
+
+        --user=* )
+            PROMPT_PASSWORD=yes
+            MYSQL_ADMIN="${1#*=}";;
+
+        * ) echo "ERROR: $1 is not supported, see '$0 --help'" >&2; exit 1;;
+    esac
+    shift
+done
+
+# Help.
+
+if [[ $PRINT_HELP ]]; then
+    echo "Updates ClouSE -- the Cloud Storage Engine for MySQL"
+    echo
+    echo "Usage: $0 [--defaults-file=<file.cnf>] [--help] [--user=<admin>]"
+    echo "  --help              Display this help and exit."
+    echo "  --user=#            Use this MySQL admin user instead of 'root'."
+    echo
+    echo "This script must be run as root and expects mysql to be on PATH; you must"
+    echo "know MySQL admin password."
+    exit 0
+fi
+
+# Check if this is a good installation.
+
+set -e
+
+CLOUSE_ROOT=`dirname $0`
+
+if [[ ! -f "$CLOUSE_ROOT/clouse.so" ]]; then
+    echo "ERROR: $CLOUSE_ROOT/clouse.so is not found" >&2
+    echo "    Please download ClouSE from http://www.oblaksoft.com/downloads/" >&2
+    exit 1
+fi
+
+if which strings > /dev/null 2>&1; then
+    DIST_VERSION=`strings "$CLOUSE_ROOT/clouse.so" | grep @VERSION@ | sed -e 's/^@VERSION@:\s*//'`
+else
+    # Handle systems without strings utility.
+    # Infer the version from the path.
+    DIST_VERSION=`cd "$CLOUSE_ROOT"; pwd`
+    DIST_VERSION=${DIST_VERSION##*clouse-}
+    DIST_VERSION=${DIST_VERSION%%-linux-*}
+fi
+
+# mysql is required.
+
+PATH=$PATH:/usr/local/mysql/bin
+
+if ! which mysql > /dev/null; then
+    echo "ERROR: mysql is not found, please add it to PATH" >&2
+    exit 1
+fi
+
+# Must run as root.
+
+if [[ $EUID -ne 0 ]]; then
+    echo "ERROR: must be root; use 'sudo $0 $*'" >&2
+    exit 1
+fi
+
+# Collect MySQL information.
+
+echo "Updating ClouSE ..."
+echo "... checking MySQL server configuration ..."
+
+MYSQL_INFO_SCRIPT="SELECT '@@@STATUS=', PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME='ClouSE';\
+SELECT '@@@SONAME=', PLUGIN_LIBRARY FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME='ClouSE';\
+SELECT '@@@VERSION=', @@VERSION;\
+SELECT '@@@PLUGIN_DIR=', VARIABLE_VALUE FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES WHERE VARIABLE_NAME='plugin_dir';\
+SELECT '@@@DATADIR=', VARIABLE_VALUE FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES WHERE VARIABLE_NAME='datadir';\
+SELECT '@@@CLOUSE_VERSION=', VARIABLE_VALUE FROM INFORMATION_SCHEMA.GLOBAL_VARIABLES WHERE VARIABLE_NAME='clouse_version';"
+
+# Detect our ready-to-run image and use clouse_admin MySQL user.
+
+MYSQL_PASSWORD=
+
+if [[ -e /etc/init.d/clouse-initdb ]] && [[ -z $PROMPT_PASSWORD ]]; then
+    MYSQL_ADMIN=clouse_admin
+else
+    echo "... please enter MySQL $MYSQL_ADMIN's password ..."
+    read -rs -p "Enter password: " MYSQL_PASSWORD
+    echo
+fi
+
+MYSQL_INFO=`echo "$MYSQL_INFO_SCRIPT" | mysql -h localhost -u "$MYSQL_ADMIN" --disable-column-names --password="$MYSQL_PASSWORD"`
+
+# Parse MySQL information.
+
+CLOUSE_STATUS=`echo "$MYSQL_INFO" | grep ^@@@STATUS= | sed -e 's/^@@@STATUS=\s*//'`
+SONAME=`echo "$MYSQL_INFO" | grep ^@@@SONAME= | sed -e 's/^@@@SONAME=\s*//'`
+MYSQL_VERSION=`echo "$MYSQL_INFO" | grep ^@@@VERSION= | sed -e 's/^@@@VERSION=\s*//'`
+MYSQL_PLUGIN_DIR=`echo "$MYSQL_INFO" | grep ^@@@PLUGIN_DIR= | sed -e 's/^@@@PLUGIN_DIR=\s*//'`
+MYSQL_DATADIR=`echo "$MYSQL_INFO" | grep ^@@@DATADIR= | sed -e 's/^@@@DATADIR=\s*//'`
+CLOUSE_VERSION=`echo "$MYSQL_INFO" | grep ^@@@CLOUSE_VERSION= | sed -e 's/^@@@CLOUSE_VERSION=\s*//'`
+
+if [[ "$CLOUSE_STATUS" != ACTIVE ]]; then
+    echo "ClouSE is not installed, please use install-clouse."
+    exit 0
+fi
+
+echo "... thank you, got it:"
+echo "... MySQL server version: $MYSQL_VERSION"
+echo "... MySQL server plugin dir: $MYSQL_PLUGIN_DIR"
+echo "... ClouSE plugin name: $SONAME"
+echo "... ClouSE version: $CLOUSE_VERSION"
+
+if [[ ! -d "$MYSQL_PLUGIN_DIR" ]]; then
+    echo "ERROR: $MYSQL_PLUGIN_DIR is not found!!!" >&2
+    exit 1
+fi
+
+# Check if we're downgrading ClouSE.
+
+function parse_version {
+    # Usage: parse_version VERSION
+    # Version format: A.Brr.C.D where A is major version, B is minor version,
+    # rr is a pre-release qualifier ('b' or 'rc' or none), C is data version
+    # and D is build version.  We need to get A, B and C.
+
+    local VER_ARR=(${1//./ })
+
+    if [[ ${#VER_ARR[@]} != 4 ]]; then
+        echo "ERROR: invalid ClouSE version $1" >&2
+        exit 1
+    fi
+
+    # Translate version into a number (the same way ClouSE does).
+
+    echo $((${VER_ARR[0]} * 65536 + ${VER_ARR[1]//[^0-9]/} * 256 + ${VER_ARR[2]}))
+}
+
+DIST_VERSION_NUM=`parse_version $DIST_VERSION`
+CLOUSE_VERSION_NUM=`parse_version $CLOUSE_VERSION`
+
+if [[ $DIST_VERSION_NUM < $CLOUSE_VERSION_NUM ]]; then
+    echo "ERROR: cannot downgrade ClouSE to $DIST_VERSION, version $CLOUSE_VERSION is installed" >&2
+    exit 1
+fi
+
+# Massage MySQL version.  It turns out that MySQL may amend its version
+# based on configuration, so we strip known substrings.
+
+MYSQL_VERSION=${MYSQL_VERSION/-log/}
+MYSQL_VERSION=${MYSQL_VERSION/-cll-lve/-cll}
+
+# Check if we support this MySQL version.
+
+if [[ ! -f "$CLOUSE_ROOT/ha_clouse-$MYSQL_VERSION.so" ]]; then
+    echo "ERROR: $CLOUSE_ROOT/ha_clouse-$MYSQL_VERSION.so is not found" >&2
+    echo "    MySQL server $MYSQL_VERSION is not supported" >&2
+    echo "    Send email to support@oblaksoft.com" >&2
+    exit 1
+fi
+
+# Check if ClouSE is installed in the plugin dir.
+
+if [[ ! -f "$MYSQL_PLUGIN_DIR"/clouse.so ]] || [[ ! -f "$MYSQL_PLUGIN_DIR/$SONAME" ]]; then
+    echo "ERROR: ClouSE is not found in $MYSQL_PLUGIN_DIR!!!" >&2
+    exit 1
+fi
+
+# Figure out the target ha_clouse* file.
+
+HACLOUSE_PATH=$MYSQL_PLUGIN_DIR/$SONAME
+
+if [[ -L "$HACLOUSE_PATH" ]]; then
+    HACLOUSE_PATH=`readlink "$HACLOUSE_PATH"`
+fi
+
+if [[ ! -f "$HACLOUSE_PATH" ]]; then
+    echo "ERROR: $HACLOUSE_PATH is not found!!!" >&2
+    exit 1
+fi
+
+# Detect MySQL daemon script location.
+
+MYSQL_DAEMON_SCRIPT=
+
+if [[ -e /etc/init.d/mysql ]]; then
+    MYSQL_DAEMON_SCRIPT=/etc/init.d/mysql
+elif [[ -e /etc/init.d/mysqld ]]; then
+    MYSQL_DAEMON_SCRIPT=/etc/init.d/mysqld
+elif [[ -e /etc/init.d/mysql.server ]]; then
+    MYSQL_DAEMON_SCRIPT=/etc/init.d/mysql.server
+fi
+
+# Detect upgrade from v1.0 Beta.
+
+if [[ $DIST_VERSION_NUM != $CLOUSE_VERSION_NUM && $CLOUSE_VERSION_NUM == 65537 ]]; then
+    echo "WARNING: cannot upgrade ClouSE from version $CLOUSE_VERSION"
+    echo "Data needs to be migrated to a new location, which may take some time"
+
+    while true; do
+        echo -n "Do you want to migrate data now? [y/n] "
+        read
+        case $REPLY in
+            [Yy]* ) break;;
+            [Nn]* ) exit 0;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
+
+    # We need to be able to stop & start MySQL.
+
+    if [[ -z $MYSQL_DAEMON_SCRIPT ]]; then
+        echo "ERROR: Couldn't find MySQL server start / stop script in /etc/init.d" >&2
+        exit 1
+    fi
+
+    # Figure out my.cnf location.
+
+    if [[ -z "$MY_CNF" ]]; then
+        MY_CNF=/etc/my.cnf
+
+        if [[ ! -f "$MY_CNF" ]]; then
+            MY_CNF=/etc/mysql/my.cnf
+        fi
+    fi
+
+    # my.cnf must exist and contain clouse_cloud_data_url option
+
+    if [[ ! -f "$MY_CNF" ]]; then
+        echo "ERROR: $MY_CNF is not found, use --defaults-file=<file.cnf> to specify" >&2
+        exit 1
+    fi
+
+    if ! grep -q "^\s*clouse_cloud_data_url\s*=" "$MY_CNF"; then
+        echo "ERROR: $MY_CNF doesn't have clouse_cloud_data_url option -- wrong config file" >&2
+        echo "    use --defaults-file=<file.cnf> to specify a different file" >&2
+        exit 1
+    fi
+
+    # Figure out ClouSE local log.
+
+    CLOUSE_LOG=`grep "^\s*clouse_local_log_path\s*=" "$MY_CNF" | sed -e "s/^.*clouse_local_log_path\s*=\s*//" | sed -e "s/#.*//" | sed -e "s/\s*$//"`
+
+    if [[ -z "$CLOUSE_LOG" ]]; then
+        CLOUSE_LOG=$MYSQL_DATADIR/clse_log
+    fi
+
+    if [[ ! -f "${CLOUSE_LOG}_hdr.xnl" ]]; then
+        echo "ERROR: cannot find ${CLOUSE_LOG}_hdr.xnl" >&2
+        exit 1
+    fi
+
+    if [[ "$MYSQL_ADMIN" == clouse_admin ]]; then
+        # Unfortuantely, clouse_admin is likely to miss any custom databases
+        MYSQL_ADMIN=root
+        echo "... please enter MySQL $MYSQL_ADMIN's password ..."
+        read -rs -p "Enter password: " MYSQL_PASSWORD
+        echo
+    fi
+
+    # Dump all ClouSE tables to a file
+
+    echo "The data is going to be moved to a new location:"
+    CLOUD_DATA_URL=`grep -m1 "^\s*clouse_cloud_data_url\s*=" "$MY_CNF" | sed -e "s/^.*clouse_cloud_data_url\s*=\s*//" | sed -e "s/#.*//" | sed -e "s/\s*$//"`
+    echo "$CLOUD_DATA_URL-2"
+
+    MYSQL_DATABASES=`echo 'SELECT DISTINCT TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES WHERE ENGINE="CLOUSE";' \
+                    | mysql -h localhost -u "$MYSQL_ADMIN" --disable-column-names --password="$MYSQL_PASSWORD"`
+
+    MYSQLDUMP_FILE=/tmp/dbdump.sql
+
+    rm -f $MYSQLDUMP_FILE
+
+    while read -r MYSQL_DB; do
+        echo "Exporting $MYSQL_DB to $MYSQLDUMP_FILE ..."
+
+        echo "USE \`$MYSQL_DB\`;" >> "$MYSQLDUMP_FILE"
+        echo >> "$MYSQLDUMP_FILE"
+
+        echo "SELECT DISTINCT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='$MYSQL_DB' AND ENGINE='CLOUSE';" \
+            | mysql -h localhost -u "$MYSQL_ADMIN" --disable-column-names --password="$MYSQL_PASSWORD" \
+            | xargs --no-run-if-empty mysqldump -h localhost -u "$MYSQL_ADMIN" --password="$MYSQL_PASSWORD" --compact "$MYSQL_DB" >> "$MYSQLDUMP_FILE"
+    done <<< "$MYSQL_DATABASES"
+
+    # Install new ClouSE binaries.
+
+    $MYSQL_DAEMON_SCRIPT stop
+    rm -f $CLOUSE_LOG*
+
+    cp "$CLOUSE_ROOT/clouse.so" "$MYSQL_PLUGIN_DIR/clouse.so"
+    cp "$CLOUSE_ROOT/ha_clouse-$MYSQL_VERSION.so" "$HACLOUSE_PATH"
+
+    # Configure new cloud location.
+
+    cp -p "$MY_CNF" "$MY_CNF".bak
+
+    CDU_SED=`echo "$CLOUD_DATA_URL-2" | sed -s 's!\\([/\\\\&]\\)!\\\\\\1!g'`
+    MY_CNF_TMP=`mktemp tmp.my.cnf.XXXXXX`
+
+    sed -e "s/^\s*clouse_cloud_data_url\s*=.*$/clouse_cloud_data_url=$CDU_SED/" < "$MY_CNF" > "$MY_CNF_TMP"
+    cp "$MY_CNF_TMP" "$MY_CNF"
+    rm "$MY_CNF_TMP"
+
+    $MYSQL_DAEMON_SCRIPT start
+
+    echo "Importing $MYSQLDUMP_FILE to $CLOUD_DATA_URL-2 ..."
+    mysql -h localhost -u "$MYSQL_ADMIN" --disable-column-names --password="$MYSQL_PASSWORD" < "$MYSQLDUMP_FILE"
+
+    echo "ClouSE is updated."
+
+    rm -f $MYSQLDUMP_FILE
+    exit 0
+fi
+
+# Copy the files.
+
+cp "$CLOUSE_ROOT/clouse.so" "$MYSQL_PLUGIN_DIR/clouse.so"
+cp "$CLOUSE_ROOT/ha_clouse-$MYSQL_VERSION.so" "$HACLOUSE_PATH"
+
+echo "ClouSE is updated."
+
+# Try to restart MySQL server.
+
+if [[ $MYSQL_DAEMON_SCRIPT ]]; then
+    $MYSQL_DAEMON_SCRIPT restart
+else
+    echo "Please restart MySQL server for the changes to take effect."
+fi
+

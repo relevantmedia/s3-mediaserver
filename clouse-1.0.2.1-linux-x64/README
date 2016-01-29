@@ -1,0 +1,94 @@
+Copyright (c) 2011-2014, Artem Livshits <artem.livshits@gmail.com>.
+All rights reserved.
+
+Copyright (c) 2011-2014, OblakSoft LLC.
+All rights reserved.
+
+
+This is a release of:
+
+* ClouSE 1.0 -- the Cloud Storage Engine
+* ha_clouse 1.0 -- the handlerton to plug ClouSE into MySQL, Community Edition
+
+The license and copyright information for ClouSE as well as license and
+copyright information for third-party components that ClouSE may include
+can be found in the COPYING.ClouSE file.
+
+The license and copyright information for ha_clouse as well as license and
+copyright information for third-party components that ha_clouse may include
+can be found in the COPYING.ha_clouse file.
+
+
+The release contains the following files:
+
+* COPYING.ClouSE     -- license and copyright information for ClouSE
+* COPYING.ha_clouse  -- license and copyright information for ha_clouse
+* README             -- overview and introduction
+* clouse.pdf         -- ClouSE documentation
+* clouse.so          -- ClouSE implementation
+* ha_clouse-N.N.N.so -- MySQL SE handlertons (for all supported MySQL versions)
+* install-clouse     -- ClouSE installation script
+* my-clouse.cnf      -- ClouSE options examples for my.cnf
+* update-clouse      -- ClouSE update script
+* wscmd              -- command line tool to work with cloud storage
+
+
+1. INSTALLATION
+
+To install ClouSE run the install-clouse script as root.  Make sure that
+the MySQL server is running and be prepared to enter the password for the
+MySQL root user.  For information about install-clouse options run
+
+shell> ./install-clouse --help
+
+To configure Cloud Storage Connection, the script is going to prompt for
+three pieces of information: Access Key, Secret Key, and Bucket URL.
+
+The Access Key and Secret Key can be retrieved here:
+
+* Amazon S3             https://portal.aws.amazon.com/gp/aws/securityCredentials
+* Google Cloud Storage  https://code.google.com/apis/console
+
+The Bucket URL has the following format:
+
+* Amazon S3             s3://s3.amazonaws.com/<bucket>/<prefix>
+* Google Cloud Storage  gs://commondatastorage.googleapis.com/<bucket>/<prefix>
+
+The <bucket> is the name of the bucket that is going to store the database
+data.  A bucket can be created (or you can find an existing bucket) here:
+
+* Amazon S3             https://console.aws.amazon.com/s3/home
+* Google Cloud Storage  https://storage.cloud.google.com
+
+The <prefix> is just an arbitrary name that can be used to isolate your
+database data from other files in the bucket.
+
+If installation fails, please refer to the "Troubleshooting Configuration
+and Connection Issues" section in clouse.pdf, or go to
+http://www.oblaksoft.com/documentation/troubleshooting/ for potential
+solutions.
+
+
+2. USING CLOUSE
+
+To create a table in ClouSE the ENGINE=CLOUSE option can be used in
+the CREATE TABLE statement, for example:
+
+mysql> CREATE TABLE t1 (id INT KEY, data VARCHAR(64)) ENGINE=CLOUSE;
+
+Alternatively, the default-storage-engine configuration option can
+be set to ClouSE so that all new tables are created in ClouSE by
+default (the my-clouse.cnf file has this option set to ClouSE).
+
+To move an existing table to ClouSE the ENGINE=CLOUSE option can be
+used in the ALTER TABLE statement, for example:
+
+mysql> ALTER TABLE t2 ENGINE=CLOUSE;
+
+
+-----------------------------------------------------------------------
+For more information about ClouSE and MySQL please refer to clouse.pdf
+and the MySQL documentation correspondingly.
+
+For the comprehensive list of information about OblakSoft, ClouSE or 
+additional documentation see http://www.oblaksoft.com.
