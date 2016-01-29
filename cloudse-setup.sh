@@ -53,12 +53,6 @@ ln -s "$MYSQL_PLUGIN_DIR/ha_clouse-$MYSQL_VERSION.so" "$MYSQL_PLUGIN_DIR/ha_clou
 
 echo "ClouSE is deployed."
 echo
-
-# Collect the config info.
-CLOUD_ACCESS_KEY=AKIAJEB2K24QRM7F3TWA
-CLOUD_SECRET_KEY=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
-CLOUD_DATA_URL=s3://s3.amazonaws.com/rm-wp/rm-media
-
 echo "Configuring Cloud Storage Connection ..."
 
 while true; do
