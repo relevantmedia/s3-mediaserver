@@ -1,6 +1,7 @@
 # Parse arguments.
 MY_CNF=
 MYSQL_ADMIN=root
+CLOUD_DATA_URL=s3://s3.amazonaws.com/$S3_MYSQL_BUCKET
 
 # Check if this is a good installation.
 CLOUSE_ROOT=/tmp/clouse
