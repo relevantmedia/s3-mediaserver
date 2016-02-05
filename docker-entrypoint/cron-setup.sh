@@ -6,7 +6,7 @@ S3_BACKUP_BUCKET=$S3_BACKUP_BUCKET
 BACKUP_DIRECTORY=/tmp/backups/
 SQL_FILE=$BACKUP_DIRECTORY/*.sql
 
-if [ -z "$S3_BACKUP_BUCKET" ]; then
+if [ "$S3_BACKUP_BUCKET" ]; then
   ## create bucket if it does not exits
   aws s3 mb s3://$S3_BACKUP_BUCKET
   mkdir -p $BACKUP_DIRECTORY
