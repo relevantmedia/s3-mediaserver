@@ -8,6 +8,8 @@ docker run --name my-container-name -e MYSQL_ROOT_PASSWORD=my-mysql-root-passwor
 ```
 `MYSQL_ROOT_PASSWORD` must be set for installation to complete. You have the option of adding another user and database during the run process.
 
+By default when mysql is installed the the root user has access from anywhere `'root'@'%'`. Use `-e MYSQL_ROOT_HOST=localhost` or a specific ip address if you want to limit access to mysql running on your container.
+
 ### Configure the CLOUSE mysql plugin to connect to S3
 Configure the CLOUSE plugin with its own IAM keys to give mysql access to write to an s3 bucket. The CLOUSE plugin was written by oblaksoft and documentaion can be found here.
 

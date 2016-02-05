@@ -52,8 +52,8 @@ if [ "$1" = 'mysqld' ]; then
         "${mysql[@]}" <<-EOSQL
             SET @@SESSION.SQL_LOG_BIN=0;
             DELETE FROM mysql.user where user != 'mysql.sys';
-            CREATE USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}' ;
-            GRANT ALL ON *.* TO 'root'@'localhost' WITH GRANT OPTION ;
+            CREATE USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}' ;
+            GRANT ALL ON *.* TO 'root'@'%' WITH GRANT OPTION ;
             DROP DATABASE IF EXISTS test ;
             FLUSH PRIVILEGES ;
 EOSQL
@@ -96,7 +96,6 @@ EOSQL
             echo >&2 'MySQL init process failed.'
             exit 1
         fi
-
         echo
         echo 'MySQL init process done. Ready for start up.'
         echo
