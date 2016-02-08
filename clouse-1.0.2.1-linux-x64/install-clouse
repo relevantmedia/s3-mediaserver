@@ -168,9 +168,9 @@ echo
 
 # Collect the config info.
 
-CLOUD_ACCESS_KEY=AKIAJEB2K24QRM7F3TWA
-CLOUD_SECRET_KEY=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
-CLOUD_DATA_URL=s3://s3.amazonaws.com/rm-wp/rm-media
+CLOUD_ACCESS_KEY=$CLOUD_ACCESS_KEY
+CLOUD_SECRET_KEY=$CLOUD_SECRET_KEY
+CLOUD_DATA_URL=
 
 # echo "Configuring Cloud Storage Connection ..."
 #
