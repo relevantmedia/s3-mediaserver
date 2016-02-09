@@ -1,13 +1,12 @@
 # Parse arguments.
-MY_CNF=
 MYSQL_ADMIN=root
 CLOUD_DATA_URL=s3://s3.amazonaws.com/$S3_MYSQL_BUCKET/media
 
 # Check if this is a good installation.
-CLOUSE_ROOT=/tmp/clouse
+CLOUSE_ROOT=/tmp/clouse-1.0.2.1-linux-x64
 
 # mysql is required.
-PATH=$PATH:/usr/local/mysql/bin
+PATH=$PATH:/usr/bin/mysql
 MY_CNF=/etc/my.cnf
 
 # Collect MySQL information.
