@@ -4,7 +4,7 @@ FROM oraclelinux:latest
 ENV PACKAGE_URL https://repo.mysql.com/yum/mysql-5.6-community/docker/x86_64/mysql-community-server-minimal-5.6.28-2.el7.x86_64.rpm
 
 RUN mkdir /docker-entrypoint-initdb.d
-COPY clouse-1.0.2.1-linux-x64 /tmp/
+COPY clouse-1.0.2.1-linux-x64/* /tmp/clouse-1.0.2.1-linux-x64/
 COPY /docker-entrypoint/* /docker-entrypoint-initdb.d/
 # COPY /aws/* /root/.aws/
 
